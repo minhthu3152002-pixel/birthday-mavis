@@ -1,133 +1,271 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happy Birthday!</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{background:#fff8f9;display:flex;justify-content:center;align-items:center;min-height:100vh}
-    .wrap{text-align:center;padding:2rem 1rem;font-family:'Nunito',sans-serif}
-    h1{font-family:'Pacifico',cursive;font-size:2rem;color:#d4537e;margin-bottom:0.25rem;font-weight:400}
-    .sub{font-size:14px;color:#888780;margin-bottom:2rem}
-    canvas{display:block;margin:0 auto}
-    .btn{margin-top:1.5rem;padding:12px 32px;border-radius:50px;border:none;background:#d4537e;color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:transform .15s,background .15s}
-    .btn:hover{background:#993556;transform:scale(1.04)}
-    .btn:active{transform:scale(0.97)}
-    .msg{margin-top:1.2rem;font-size:1.1rem;color:#3B6D11;font-weight:600;min-height:28px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Mavis!</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#fdf8f3;min-height:100vh;display:flex;justify-content:center;padding:2rem 1rem}
+.wrap{max-width:560px;width:100%}
+.hero{text-align:center;margin-bottom:1.2rem}
+.tag{display:inline-block;background:#1a1a1a;color:#f5c842;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:50px;margin-bottom:0.8rem}
+h1{font-family:'Playfair Display',serif;font-size:2.6rem;color:#1a1a1a;line-height:1.1;margin-bottom:0.3rem}
+h1 em{font-style:italic;color:#c9503a}
+.date{font-size:12px;color:#999;letter-spacing:1px;text-transform:uppercase}
+canvas{display:block;margin:0 auto;border-radius:20px;background:#fff9f5}
+.blow-msg{text-align:center;font-size:14px;color:#c9503a;font-weight:500;min-height:22px;margin:0.5rem 0;font-family:'Playfair Display',serif;font-style:italic}
+.controls{display:flex;gap:8px;justify-content:center;margin-bottom:1rem}
+.btn-blow{background:#1a1a1a;color:#fff;border:none;border-radius:50px;padding:10px 28px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.5px;transition:all .15s}
+.btn-blow:hover{background:#c9503a}
+.divider{display:flex;align-items:center;gap:12px;margin:1rem 0}
+.divider-line{flex:1;height:1px;background:#e8e0d8}
+.divider-text{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#bbb}
+.form-box{background:#fff;border-radius:20px;padding:1.4rem;border:1px solid #f0e8e0;margin-bottom:1rem}
+.lang-tabs{display:flex;gap:6px;margin-bottom:1rem}
+.lang-tab{padding:5px 16px;border-radius:50px;border:1px solid #e8e0d8;font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;background:#fff;color:#888;transition:all .15s}
+.lang-tab.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.form-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#aaa;margin-bottom:5px;display:block}
+input,textarea{width:100%;padding:10px 14px;border-radius:12px;border:1px solid #ede8e3;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:#fdf8f3;color:#1a1a1a;transition:border .15s;margin-bottom:10px}
+input:focus,textarea:focus{border-color:#1a1a1a;background:#fff}
+textarea{resize:none;height:72px}
+.btn-submit{background:#c9503a;color:#fff;border:none;border-radius:50px;padding:11px 24px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;width:100%;letter-spacing:.3px;transition:all .15s}
+.btn-submit:hover{background:#1a1a1a}
+.form-msg{text-align:center;font-size:12px;min-height:18px;margin-top:6px}
+.wishes-section{margin-top:0.5rem}
+.wishes-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:#1a1a1a;margin-bottom:0.8rem}
+.wish-card{background:#fff;border:1px solid #f0e8e0;border-radius:16px;padding:12px 16px;margin-bottom:8px;display:flex;gap:12px}
+.wish-card:hover{border-color:#e0d8d0}
+.avatar{width:38px;height:38px;border-radius:50%;background:#1a1a1a;color:#f5c842;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Playfair Display',serif}
+.wish-name{font-size:13px;font-weight:500;color:#1a1a1a}
+.wish-msg{font-size:13px;color:#666;margin-top:3px;line-height:1.5}
+.wish-time{font-size:10px;color:#ccc;margin-top:5px;letter-spacing:.5px}
+.empty{text-align:center;font-size:13px;color:#ccc;padding:1.5rem;font-style:italic}
+</style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Happy Birthday!</h1>
-  <p class="sub">Bấm nút hoặc thổi mic để thổi nến nha!</p>
-  <canvas id="c" width="340" height="320"></canvas>
-  <div class="msg" id="msg"></div>
-  <button class="btn" id="blowBtn">Thổi nến!</button>
+  <div class="hero">
+    <div class="tag">May 31 · Birthday</div>
+    <h1>Happy Birthday,<br><em>Mavis!</em></h1>
+    <p class="date">생일 축하해요, Mavis!</p>
+  </div>
+
+  <canvas id="c" width="340" height="270"></canvas>
+  <div class="blow-msg" id="blowMsg"></div>
+  <div class="controls">
+    <button class="btn-blow" id="blowBtn">Blow the candles!</button>
+  </div>
+
+  <div class="divider"><div class="divider-line"></div><div class="divider-text">Light a candle</div><div class="divider-line"></div></div>
+
+  <div class="form-box">
+    <div class="lang-tabs">
+      <button class="lang-tab active" onclick="setLang('en',this)">English</button>
+      <button class="lang-tab" onclick="setLang('kr',this)">한국어</button>
+    </div>
+    <label class="form-label" id="lbl-name">Your name</label>
+    <input id="nameInput" placeholder="Enter your name..." maxlength="12"/>
+    <label class="form-label" id="lbl-msg">Birthday wish</label>
+    <textarea id="msgInput" placeholder="Write your wish for Mavis..."></textarea>
+    <div class="form-msg" id="formMsg"></div>
+    <button class="btn-submit" onclick="addWish()" id="submitBtn">Light a candle & send wish</button>
+  </div>
+
+  <div class="wishes-section">
+    <div class="wishes-title">Wishes for Mavis</div>
+    <div id="wishesList"><div class="empty">Be the first to light a candle...</div></div>
+  </div>
 </div>
+
 <script>
+const SUPA_URL='https://ltssetphixssyuydrqln.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0c3NldHBoaXhzc3l1eWRycWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNDc3NjEsImV4cCI6MjA5NTYyMzc2MX0.mqveDi6ZP7Rx-m3VrtUdbxa9WWAOC_JUYTHVfT58alU';
+
+const LANGS={
+  en:{name:'Your name',msg:'Birthday wish',ph_name:'Enter your name...',ph_msg:'Write your wish for Mavis...',submit:'Light a candle & send wish',empty:'Be the first to light a candle...'},
+  kr:{name:'이름',msg:'생일 축하 메시지',ph_name:'이름을 입력하세요...',ph_msg:'Mavis에게 축하 메시지를 남겨주세요...',submit:'초 켜기 & 메시지 보내기',empty:'첫 번째로 초를 켜보세요...'}
+};
+let currentLang='en';
+
+function setLang(lang,el){
+  currentLang=lang;
+  document.querySelectorAll('.lang-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const L=LANGS[lang];
+  document.getElementById('lbl-name').textContent=L.name;
+  document.getElementById('lbl-msg').textContent=L.msg;
+  document.getElementById('nameInput').placeholder=L.ph_name;
+  document.getElementById('msgInput').placeholder=L.ph_msg;
+  document.getElementById('submitBtn').textContent=L.submit;
+}
+
 const canvas=document.getElementById('c');
 const ctx=canvas.getContext('2d');
 const W=canvas.width,H=canvas.height;
-const CANDLES=5;
-let flames=Array(CANDLES).fill(true);
+let candles=[];
 let blown=false;
 let confetti=[];
 
 function drawCake(){
   ctx.clearRect(0,0,W,H);
-  ctx.beginPath();ctx.ellipse(170,290,130,14,0,0,Math.PI*2);ctx.fillStyle='#F4C0D1';ctx.fill();
-  let g=ctx.createLinearGradient(60,200,60,290);g.addColorStop(0,'#ED93B1');g.addColorStop(1,'#D4537E');
-  ctx.beginPath();ctx.roundRect(60,220,220,70,12);ctx.fillStyle=g;ctx.fill();
-  ctx.fillStyle='#fff';for(let i=0;i<7;i++){ctx.beginPath();ctx.arc(85+i*25,255,4,0,Math.PI*2);ctx.fill();}
-  let g2=ctx.createLinearGradient(80,140,80,222);g2.addColorStop(0,'#FAC775');g2.addColorStop(1,'#EF9F27');
-  ctx.beginPath();ctx.roundRect(80,160,180,62,10);ctx.fillStyle=g2;ctx.fill();
-  ctx.fillStyle='#fff';for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(102+i*30,191,4,0,Math.PI*2);ctx.fill();}
-  let g3=ctx.createLinearGradient(100,90,100,162);g3.addColorStop(0,'#9FE1CB');g3.addColorStop(1,'#1D9E75');
-  ctx.beginPath();ctx.roundRect(100,110,140,52,10);ctx.fillStyle=g3;ctx.fill();
-  ctx.fillStyle='#fff';for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(128+i*42,136,4,0,Math.PI*2);ctx.fill();}
-  ctx.fillStyle='#fff';ctx.globalAlpha=0.7;
-  [[110,112],[130,108],[155,106],[175,108],[200,112],[225,110],[235,113]].forEach(d=>{ctx.beginPath();ctx.ellipse(d[0],d[1]+6,7,10,0,0,Math.PI*2);ctx.fill();});
-  ctx.globalAlpha=1;
-  const cx=[120,140,160,180,200];
-  const cols=['#E24B4A','#EF9F27','#5DCAA5','#7F77DD','#D4537E'];
-  for(let i=0;i<CANDLES;i++){
-    let cg=ctx.createLinearGradient(cx[i]-4,50,cx[i]+4,110);
-    cg.addColorStop(0,cols[i]);cg.addColorStop(1,cols[(i+2)%5]);
-    ctx.beginPath();ctx.roundRect(cx[i]-4,72,8,38,3);ctx.fillStyle=cg;ctx.fill();
-    ctx.beginPath();ctx.moveTo(cx[i],72);ctx.lineTo(cx[i],66);ctx.strokeStyle='#444';ctx.lineWidth=1.5;ctx.stroke();
-    if(flames[i])drawFlame(cx[i],66,Date.now());
-  }
-  for(let p of confetti){
-    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.color;ctx.globalAlpha=p.life;
-    ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.5);ctx.restore();
-  }
+  ctx.fillStyle='#fff9f5';
+  ctx.beginPath();ctx.roundRect(10,10,320,250,20);ctx.fill();
+
+  ctx.beginPath();ctx.ellipse(170,248,115,11,0,0,Math.PI*2);ctx.fillStyle='#e8ddd5';ctx.fill();
+
+  let g=ctx.createLinearGradient(55,185,55,250);g.addColorStop(0,'#e8c9a0');g.addColorStop(1,'#c9a070');
+  ctx.beginPath();ctx.roundRect(55,200,220,52,10);ctx.fillStyle=g;ctx.fill();
+  ctx.fillStyle='#fff8f0';
+  for(let i=0;i<6;i++){ctx.beginPath();ctx.ellipse(80+i*30,202,11,7,0,0,Math.PI*2);ctx.fill();}
+  ctx.fillStyle='#c9503a';
+  for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(95+i*32,222,3,0,Math.PI*2);ctx.fill();}
+
+  let g2=ctx.createLinearGradient(78,145,78,202);g2.addColorStop(0,'#f0c8a8');g2.addColorStop(1,'#d4a878');
+  ctx.beginPath();ctx.roundRect(78,162,184,42,8);ctx.fillStyle=g2;ctx.fill();
+  ctx.fillStyle='#fff8f0';
+  for(let i=0;i<4;i++){ctx.beginPath();ctx.ellipse(100+i*38,164,9,6,0,0,Math.PI*2);ctx.fill();}
+  ctx.fillStyle='#1a1a1a';
+  for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(115+i*46,182,2.5,0,Math.PI*2);ctx.fill();}
+
+  let g3=ctx.createLinearGradient(100,100,100,164);g3.addColorStop(0,'#f8e8d0');g3.addColorStop(1,'#e8c8a0');
+  ctx.beginPath();ctx.roundRect(100,118,140,46,8);ctx.fillStyle=g3;ctx.fill();
+  ctx.fillStyle='#fff8f0';
+  for(let i=0;i<3;i++){ctx.beginPath();ctx.ellipse(118+i*44,120,8,5,0,0,Math.PI*2);ctx.fill();}
+
+  ctx.save();
+  ctx.font='italic bold 12px "Playfair Display",serif';
+  ctx.fillStyle='#c9503a';ctx.textAlign='center';
+  ctx.fillText('Mavis ♥',170,146);
+  ctx.restore();
+
+  const cols=['#c9503a','#1a1a1a','#f5c842','#4a9aba','#8b5cf6','#059669','#dc2626','#d97706'];
+  candles.forEach((c,i)=>{
+    const x=c.x;
+    ctx.beginPath();ctx.roundRect(x-5,70,10,48,3);ctx.fillStyle=cols[i%cols.length];ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.25)';
+    ctx.beginPath();ctx.roundRect(x-1,74,2,40,1);ctx.fill();
+    ctx.beginPath();ctx.moveTo(x,70);ctx.lineTo(x,63);ctx.strokeStyle='#666';ctx.lineWidth=1.2;ctx.stroke();
+    if(c.lit)drawFlame(x,63,Date.now());
+    ctx.save();
+    ctx.font='500 8px "DM Sans",sans-serif';
+    ctx.fillStyle='#fff';ctx.textAlign='center';
+    ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=3;
+    ctx.fillText(c.name.length>6?c.name.slice(0,5)+'..':c.name,x,90);
+    ctx.restore();
+  });
+
+  confetti.forEach(p=>{
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);
+    ctx.fillStyle=p.color;ctx.globalAlpha=p.life;
+    p.circle?ctx.arc(0,0,p.s/2,0,Math.PI*2):ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.4);
+    ctx.fill();ctx.restore();
+  });
   ctx.globalAlpha=1;
 }
 
 function drawFlame(x,y,t){
-  const f=Math.sin(t/80+x)*2;
+  const f=Math.sin(t/90+x)*1.5;
   ctx.save();ctx.translate(x,y);
-  ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(-6+f,-8,-8+f,-16,0,-22);ctx.bezierCurveTo(8-f,-16,6-f,-8,0,0);ctx.fillStyle='#EF9F27';ctx.fill();
-  ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(-3+f,-6,-4,-12,0,-16);ctx.bezierCurveTo(4,-12,3-f,-6,0,0);ctx.fillStyle='#FAC775';ctx.fill();
-  ctx.beginPath();ctx.arc(0,-16,2.5,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+  ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(-5+f,-6,-6+f,-14,0,-19);ctx.bezierCurveTo(6-f,-14,5-f,-6,0,0);ctx.fillStyle='#f59e0b';ctx.fill();
+  ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(-2+f,-4,-3,-9,0,-13);ctx.bezierCurveTo(3,-9,2-f,-4,0,0);ctx.fillStyle='#fef3c7';ctx.fill();
+  ctx.beginPath();ctx.arc(0,-13,1.8,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
   ctx.restore();
 }
 
 function spawnConfetti(){
-  const cols=['#D4537E','#EF9F27','#1D9E75','#7F77DD','#378ADD','#E24B4A'];
-  for(let i=0;i<80;i++){
-    confetti.push({x:80+Math.random()*180,y:60+Math.random()*60,vx:(Math.random()-0.5)*4,vy:-Math.random()*6-2,r:Math.random()*Math.PI*2,vr:(Math.random()-0.5)*0.2,s:6+Math.random()*8,color:cols[Math.floor(Math.random()*cols.length)],life:1});
+  const cols=['#c9503a','#f5c842','#1a1a1a','#4a9aba','#8b5cf6','#059669'];
+  for(let i=0;i<100;i++){
+    confetti.push({x:60+Math.random()*220,y:40+Math.random()*60,vx:(Math.random()-0.5)*5,vy:-Math.random()*6-2,r:Math.random()*Math.PI*2,vr:(Math.random()-0.5)*0.25,s:4+Math.random()*8,color:cols[Math.floor(Math.random()*cols.length)],life:1,circle:Math.random()>.5});
   }
 }
 
 function updateConfetti(){
   confetti=confetti.filter(p=>p.life>0);
-  for(let p of confetti){p.x+=p.vx;p.y+=p.vy;p.vy+=0.18;p.r+=p.vr;p.life-=0.008;}
+  confetti.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.14;p.r+=p.vr;p.life-=0.007;});
 }
 
-function blowAll(){
-  if(blown)return;
-  let remaining=flames.filter(f=>f).length;
-  if(remaining===0)return;
+function placeCandlesFromWishes(wishes){
+  candles=[];
+  const maxC=Math.min(wishes.length,8);
+  if(!maxC)return;
+  const spacing=Math.min(38,200/maxC);
+  const startX=170-(spacing*(maxC-1))/2;
+  for(let i=0;i<maxC;i++) candles.push({x:startX+i*spacing,name:wishes[i].name,lit:true});
+}
+
+document.getElementById('blowBtn').onclick=()=>{
+  if(blown){
+    blown=false;confetti=[];
+    candles.forEach(c=>c.lit=true);
+    document.getElementById('blowMsg').textContent='';
+    document.getElementById('blowBtn').textContent='Blow the candles!';
+    return;
+  }
+  if(!candles.length){document.getElementById('blowMsg').textContent='No candles yet!';return;}
   let i=0;
   const iv=setInterval(()=>{
-    let idx=flames.indexOf(true);
-    if(idx===-1){clearInterval(iv);return;}
-    flames[idx]=false;i++;
-    if(i>=remaining){clearInterval(iv);setTimeout(()=>{blown=true;spawnConfetti();document.getElementById('msg').textContent='Happy Birthday! Chuc mung sinh nhat!';document.getElementById('blowBtn').textContent='Thổi lại!';},200);}
-  },120);
-}
-
-function resetCake(){flames=Array(CANDLES).fill(true);blown=false;confetti=[];document.getElementById('msg').textContent='';document.getElementById('blowBtn').textContent='Thổi nến!';}
-
-document.getElementById('blowBtn').onclick=()=>{blown?resetCake():blowAll();};
-
-canvas.onclick=(e)=>{
-  const rect=canvas.getBoundingClientRect();
-  const mx=(e.clientX-rect.left)*(W/rect.width),my=(e.clientY-rect.top)*(H/rect.height);
-  const cx=[120,140,160,180,200];
-  for(let i=0;i<CANDLES;i++){
-    if(Math.abs(mx-cx[i])<12&&my<90&&my>50){
-      flames[i]=false;
-      if(flames.every(f=>!f)&&!blown){blown=true;spawnConfetti();document.getElementById('msg').textContent='Happy Birthday!';document.getElementById('blowBtn').textContent='Thổi lại!';}
+    if(i<candles.length){candles[i].lit=false;i++;}
+    else{
+      clearInterval(iv);blown=true;spawnConfetti();
+      document.getElementById('blowMsg').textContent='Happy Birthday, Mavis! 생일 축하해요!';
+      document.getElementById('blowBtn').textContent='Relight candles!';
     }
-  }
+  },130);
 };
 
-if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-    const ac=new AudioContext(),src=ac.createMediaStreamSource(stream),an=ac.createAnalyser();
-    an.fftSize=256;src.connect(an);
-    const buf=new Uint8Array(an.frequencyBinCount);
-    function check(){an.getByteFrequencyData(buf);if(buf.reduce((a,b)=>a+b,0)/buf.length>18&&!blown)blowAll();requestAnimationFrame(check);}
-    check();
-  }).catch(()=>{});
+async function addWish(){
+  const name=document.getElementById('nameInput').value.trim();
+  const message=document.getElementById('msgInput').value.trim();
+  const fMsg=document.getElementById('formMsg');
+  if(!name||!message){
+    fMsg.style.color='#c9503a';
+    fMsg.textContent=currentLang==='kr'?'이름과 메시지를 입력해주세요!':'Please enter your name and wish!';
+    return;
+  }
+  fMsg.style.color='#999';fMsg.textContent=currentLang==='kr'?'전송 중...':'Sending...';
+  try{
+    const res=await fetch(`${SUPA_URL}/rest/v1/birthday_wishes`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=minimal'},
+      body:JSON.stringify({name,message})
+    });
+    if(!res.ok)throw new Error();
+    document.getElementById('nameInput').value='';
+    document.getElementById('msgInput').value='';
+    fMsg.style.color='#059669';
+    fMsg.textContent=currentLang==='kr'?'초가 켜졌어요!':'Candle lit & wish sent!';
+    setTimeout(()=>fMsg.textContent='',3000);
+    loadWishes();
+  }catch(e){fMsg.style.color='#c9503a';fMsg.textContent='Something went wrong. Try again!';}
+}
+
+async function loadWishes(){
+  try{
+    const res=await fetch(`${SUPA_URL}/rest/v1/birthday_wishes?select=*&order=created_at.asc`,{
+      headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}
+    });
+    const data=await res.json();
+    placeCandlesFromWishes(data);
+    const list=document.getElementById('wishesList');
+    if(!data.length){list.innerHTML=`<div class="empty">${LANGS[currentLang].empty}</div>`;return;}
+    list.innerHTML=[...data].reverse().map(w=>`
+      <div class="wish-card">
+        <div class="avatar">${w.name.slice(0,2).toUpperCase()}</div>
+        <div style="flex:1">
+          <div class="wish-name">${w.name}</div>
+          <div class="wish-msg">${w.message}</div>
+          <div class="wish-time">${new Date(w.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+        </div>
+      </div>`).join('');
+  }catch(e){}
 }
 
 function loop(){updateConfetti();drawCake();requestAnimationFrame(loop);}
 loop();
+loadWishes();
+setInterval(loadWishes,8000);
 </script>
 </body>
 </html>
