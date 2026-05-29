@@ -466,7 +466,7 @@ async function loadWishes(){
     placeCandlesFromDB(data);
     const list=document.getElementById('wishesList');
     if(!data.length){list.innerHTML=`<div class="empty">${TXT[lang].empty}</div>`;return;}
-    list.innerHTML=[...data].reverse().map(w=>`<div class="wish-card"><div class="wish-header"><div class="avatar">${w.name.slice(0,2).toUpperCase()}</div><div><div class="wish-name">${w.name}</div><div class="wish-time">${new Date(w.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div></div><div class="wish-msg">${w.message}</div></div>`).join('');
+    list.innerHTML=[...data].reverse().map(w=>`<div class="wish-card"><div class="wish-header"><div class="avatar">${w.name.slice(0,2).toUpperCase()}</div><div><div class="wish-name">${w.name}</div><div class="wish-time">${new Date(w.created_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Ho_Chi_Minh'})}</div></div></div><div class="wish-msg">${w.message}</div></div>`).join('');
   }catch(e){}
 }
 
