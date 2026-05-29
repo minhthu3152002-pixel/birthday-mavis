@@ -33,8 +33,6 @@ textarea{resize:none;height:72px}
 .btn-submit{background:#c9503a;color:#fff;border:none;border-radius:50px;padding:11px 24px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;width:100%;letter-spacing:.3px;transition:all .15s}
 .btn-submit:hover{background:#1a1a1a}
 .form-msg{text-align:center;font-size:12px;min-height:18px;margin-top:6px}
-
-/* WISH CARDS - thiệp style */
 .wishes-section{margin-top:0.5rem}
 .wishes-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:#1a1a1a;margin-bottom:1rem}
 .wish-card{position:relative;background:linear-gradient(135deg,#fffdf9 0%,#fff8f0 100%);border:1px solid #e8d5c0;border-radius:16px;padding:20px 20px 20px 28px;margin-bottom:12px;overflow:hidden}
@@ -46,6 +44,21 @@ textarea{resize:none;height:72px}
 .wish-time{font-size:10px;color:#bbb;letter-spacing:.3px}
 .wish-msg{font-family:'Dancing Script',cursive;font-size:16px;color:#5a3a2a;line-height:1.6;padding-left:2px}
 .empty{text-align:center;font-size:13px;color:#ccc;padding:1.5rem;font-style:italic}
+
+/* POPUP */
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity .3s}
+.popup-overlay.show{opacity:1;pointer-events:all}
+.popup-box{background:#fff;border-radius:24px;padding:2.5rem 2rem;max-width:340px;width:90%;text-align:center;transform:scale(0.88);transition:transform .3s;position:relative;overflow:hidden}
+.popup-overlay.show .popup-box{transform:scale(1)}
+.popup-box::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#c9503a,#f5c842,#c9503a)}
+.popup-candle{font-size:2.5rem;margin-bottom:0.8rem}
+.popup-title{font-family:'Playfair Display',serif;font-size:1.4rem;color:#1a1a1a;margin-bottom:0.5rem}
+.popup-title em{color:#c9503a;font-style:italic}
+.popup-msg{font-size:13px;color:#888;line-height:1.6;margin-bottom:1.5rem}
+.popup-sub{font-family:'Dancing Script',cursive;font-size:15px;color:#c9503a;margin-bottom:1.5rem}
+.popup-btn{background:#1a1a1a;color:#fff;border:none;border-radius:50px;padding:10px 28px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s}
+.popup-btn:hover{background:#c9503a}
+.popup-confetti{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}
 </style>
 </head>
 <body>
@@ -83,15 +96,46 @@ textarea{resize:none;height:72px}
   </div>
 </div>
 
+<!-- POPUP -->
+<div class="popup-overlay" id="popup">
+  <div class="popup-box">
+    <canvas class="popup-confetti" id="popupCanvas"></canvas>
+    <div class="popup-candle">🕯️</div>
+    <div class="popup-title" id="popup-title">Thank you,<br><em id="popup-name"></em>!</div>
+    <div class="popup-sub" id="popup-sub">Your candle is lit for Mavis</div>
+    <div class="popup-msg" id="popup-msg">Your wish has been delivered.<br>Mavis is so lucky to have you!</div>
+    <button class="popup-btn" id="popup-close" onclick="closePopup()">Close</button>
+  </div>
+</div>
+
 <script>
 const SUPA_URL='https://ltssetphixssyuydrqln.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0c3NldHBoaXhzc3l1eWRycWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNDc3NjEsImV4cCI6MjA5NTYyMzc2MX0.mqveDi6ZP7Rx-m3VrtUdbxa9WWAOC_JUYTHVfT58alU';
 
 const LANGS={
-  en:{name:'Your name',msg:'Birthday wish',ph_name:'Enter your name...',ph_msg:'Write your wish for Mavis...',submit:'Light a candle & send wish',empty:'Be the first to light a candle...'},
-  kr:{name:'이름',msg:'생일 축하 메시지',ph_name:'이름을 입력하세요...',ph_msg:'Mavis에게 축하 메시지를 남겨주세요...',submit:'초 켜기 & 메시지 보내기',empty:'첫 번째로 초를 켜보세요...'}
+  en:{
+    name:'Your name',msg:'Birthday wish',
+    ph_name:'Enter your name...',ph_msg:'Write your wish for Mavis...',
+    submit:'Light a candle & send wish',
+    empty:'Be the first to light a candle...',
+    popup_title:'Thank you,',
+    popup_sub:'Your candle is lit for Mavis ✨',
+    popup_msg:"Your wish has been delivered.\nMavis is so lucky to have you!",
+    popup_close:'Close'
+  },
+  kr:{
+    name:'이름',msg:'생일 축하 메시지',
+    ph_name:'이름을 입력하세요...',ph_msg:'Mavis에게 축하 메시지를 남겨주세요...',
+    submit:'초 켜기 & 메시지 보내기',
+    empty:'첫 번째로 초를 켜보세요...',
+    popup_title:'감사해요,',
+    popup_sub:'Mavis를 위한 초가 켜졌어요 ✨',
+    popup_msg:"당신의 소원이 전달되었어요.\nMavis는 당신이 있어 정말 행복해요!",
+    popup_close:'닫기'
+  }
 };
 let currentLang='en';
+let senderName='';
 
 function setLang(lang,el){
   currentLang=lang;
@@ -105,6 +149,70 @@ function setLang(lang,el){
   document.getElementById('submitBtn').textContent=L.submit;
 }
 
+function showPopup(name){
+  const L=LANGS[currentLang];
+  document.getElementById('popup-title').innerHTML=`${L.popup_title}<br><em>${name}</em>!`;
+  document.getElementById('popup-sub').textContent=L.popup_sub;
+  document.getElementById('popup-msg').innerHTML=L.popup_msg.replace('\n','<br>');
+  document.getElementById('popup-close').textContent=L.popup_close;
+  document.getElementById('popup').classList.add('show');
+  startPopupConfetti();
+}
+
+function closePopup(){
+  document.getElementById('popup').classList.remove('show');
+  stopPopupConfetti();
+}
+
+// popup confetti
+let popupConfetti=[];
+let popupAnimId=null;
+const pc=document.getElementById('popupCanvas');
+const pctx=pc.getContext('2d');
+
+function resizePopupCanvas(){
+  pc.width=pc.offsetWidth;
+  pc.height=pc.offsetHeight;
+}
+
+function startPopupConfetti(){
+  resizePopupCanvas();
+  popupConfetti=[];
+  const cols=['#c9503a','#f5c842','#1a1a1a','#4a9aba','#8b5cf6','#059669','#ec4899'];
+  for(let i=0;i<60;i++){
+    popupConfetti.push({
+      x:Math.random()*pc.width,y:-10-Math.random()*40,
+      vx:(Math.random()-0.5)*3,vy:Math.random()*2+1,
+      r:Math.random()*Math.PI*2,vr:(Math.random()-0.5)*0.15,
+      s:4+Math.random()*7,
+      color:cols[Math.floor(Math.random()*cols.length)],
+      life:1,circle:Math.random()>.5
+    });
+  }
+  function loop(){
+    pctx.clearRect(0,0,pc.width,pc.height);
+    popupConfetti=popupConfetti.filter(p=>p.y<pc.height+20);
+    popupConfetti.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+      pctx.save();pctx.translate(p.x,p.y);pctx.rotate(p.r);
+      pctx.fillStyle=p.color;pctx.globalAlpha=0.85;
+      if(p.circle){pctx.beginPath();pctx.arc(0,0,p.s/2,0,Math.PI*2);pctx.fill();}
+      else{pctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.4);}
+      pctx.restore();
+    });
+    if(popupConfetti.length>0) popupAnimId=requestAnimationFrame(loop);
+    else pctx.clearRect(0,0,pc.width,pc.height);
+  }
+  if(popupAnimId) cancelAnimationFrame(popupAnimId);
+  loop();
+}
+
+function stopPopupConfetti(){
+  if(popupAnimId) cancelAnimationFrame(popupAnimId);
+  pctx.clearRect(0,0,pc.width,pc.height);
+}
+
+// cake canvas
 const canvas=document.getElementById('c');
 const ctx=canvas.getContext('2d');
 const W=canvas.width,H=canvas.height;
@@ -116,70 +224,48 @@ function drawCake(){
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#fff9f5';
   ctx.beginPath();ctx.roundRect(0,0,W,H,20);ctx.fill();
-
-  // plate
   ctx.beginPath();ctx.ellipse(W/2,H-18,200,16,0,0,Math.PI*2);ctx.fillStyle='#e8ddd5';ctx.fill();
-
-  // bottom layer
-  let g=ctx.createLinearGradient(40,220,40,H-20);
-  g.addColorStop(0,'#e8c9a0');g.addColorStop(1,'#c9a070');
+  let g=ctx.createLinearGradient(40,220,40,H-20);g.addColorStop(0,'#e8c9a0');g.addColorStop(1,'#c9a070');
   ctx.beginPath();ctx.roundRect(40,230,480,80,14);ctx.fillStyle=g;ctx.fill();
-  // frosting blobs
   ctx.fillStyle='#fff8f0';
   for(let i=0;i<10;i++){ctx.beginPath();ctx.ellipse(68+i*44,232,16,10,0,0,Math.PI*2);ctx.fill();}
-  // dots
   ctx.fillStyle='#c9503a';
   for(let i=0;i<9;i++){ctx.beginPath();ctx.arc(75+i*50,260,4,0,Math.PI*2);ctx.fill();}
-
-  // mid layer
-  let g2=ctx.createLinearGradient(70,155,70,232);
-  g2.addColorStop(0,'#f0c8a8');g2.addColorStop(1,'#d4a878');
+  let g2=ctx.createLinearGradient(70,155,70,232);g2.addColorStop(0,'#f0c8a8');g2.addColorStop(1,'#d4a878');
   ctx.beginPath();ctx.roundRect(70,170,420,64,12);ctx.fillStyle=g2;ctx.fill();
   ctx.fillStyle='#fff8f0';
   for(let i=0;i<7;i++){ctx.beginPath();ctx.ellipse(95+i*56,172,14,9,0,0,Math.PI*2);ctx.fill();}
   ctx.fillStyle='#1a1a1a';
   for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(110+i*72,200,3.5,0,Math.PI*2);ctx.fill();}
-
-  // top layer
-  let g3=ctx.createLinearGradient(110,95,110,172);
-  g3.addColorStop(0,'#f8e8d0');g3.addColorStop(1,'#e8c8a0');
+  let g3=ctx.createLinearGradient(110,95,110,172);g3.addColorStop(0,'#f8e8d0');g3.addColorStop(1,'#e8c8a0');
   ctx.beginPath();ctx.roundRect(110,115,340,60,12);ctx.fillStyle=g3;ctx.fill();
   ctx.fillStyle='#fff8f0';
   for(let i=0;i<5;i++){ctx.beginPath();ctx.ellipse(130+i*64,117,12,8,0,0,Math.PI*2);ctx.fill();}
-
-  // Mavis text
   ctx.save();
   ctx.font='italic bold 18px "Playfair Display",serif';
   ctx.fillStyle='#c9503a';ctx.textAlign='center';
   ctx.fillText('Mavis ♥',W/2,152);
   ctx.restore();
 
-  // candles
   const cols=['#c9503a','#1a1a1a','#f5c842','#4a9aba','#8b5cf6','#059669','#dc2626','#d97706','#ec4899','#0891b2'];
   candles.forEach((c,i)=>{
     const x=c.x;
-    // candle body
     ctx.beginPath();ctx.roundRect(x-7,65,14,52,4);ctx.fillStyle=cols[i%cols.length];ctx.fill();
-    // shine
     ctx.fillStyle='rgba(255,255,255,0.2)';
     ctx.beginPath();ctx.roundRect(x-2,69,3,44,2);ctx.fill();
-    // wick
     ctx.beginPath();ctx.moveTo(x,65);ctx.lineTo(x,56);ctx.strokeStyle='#555';ctx.lineWidth=1.5;ctx.stroke();
     if(c.lit)drawFlame(x,56,Date.now());
-    // name label - white bg for readability
     const label=c.name.length>7?c.name.slice(0,6)+'..':c.name;
     ctx.save();
     ctx.font='bold 9px "DM Sans",sans-serif';
     const tw=ctx.measureText(label).width;
-    // bg pill
-    ctx.fillStyle='rgba(0,0,0,0.55)';
+    ctx.fillStyle='rgba(0,0,0,0.6)';
     ctx.beginPath();ctx.roundRect(x-tw/2-4,78,tw+8,13,4);ctx.fill();
     ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(label,x,85);
     ctx.restore();
   });
 
-  // confetti
   confetti.forEach(p=>{
     ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);
     ctx.fillStyle=p.color;ctx.globalAlpha=p.life;
@@ -202,14 +288,7 @@ function drawFlame(x,y,t){
 function spawnConfetti(){
   const cols=['#c9503a','#f5c842','#1a1a1a','#4a9aba','#8b5cf6','#059669','#ec4899'];
   for(let i=0;i<120;i++){
-    confetti.push({
-      x:80+Math.random()*400,y:30+Math.random()*80,
-      vx:(Math.random()-0.5)*6,vy:-Math.random()*7-2,
-      r:Math.random()*Math.PI*2,vr:(Math.random()-0.5)*0.25,
-      s:4+Math.random()*9,
-      color:cols[Math.floor(Math.random()*cols.length)],
-      life:1,circle:Math.random()>.5
-    });
+    confetti.push({x:80+Math.random()*400,y:30+Math.random()*80,vx:(Math.random()-0.5)*6,vy:-Math.random()*7-2,r:Math.random()*Math.PI*2,vr:(Math.random()-0.5)*0.25,s:4+Math.random()*9,color:cols[Math.floor(Math.random()*cols.length)],life:1,circle:Math.random()>.5});
   }
 }
 
@@ -222,8 +301,7 @@ function placeCandlesFromWishes(wishes){
   candles=[];
   const maxC=Math.min(wishes.length,10);
   if(!maxC)return;
-  const totalW=400;
-  const spacing=Math.min(52,totalW/maxC);
+  const spacing=Math.min(52,400/maxC);
   const startX=W/2-(spacing*(maxC-1))/2;
   for(let i=0;i<maxC;i++) candles.push({x:startX+i*spacing,name:wishes[i].name,lit:!blown});
 }
@@ -257,7 +335,8 @@ async function addWish(){
     fMsg.textContent=currentLang==='kr'?'이름과 메시지를 입력해주세요!':'Please enter your name and wish!';
     return;
   }
-  fMsg.style.color='#999';fMsg.textContent=currentLang==='kr'?'전송 중...':'Sending...';
+  fMsg.style.color='#999';
+  fMsg.textContent=currentLang==='kr'?'전송 중...':'Sending...';
   try{
     const res=await fetch(`${SUPA_URL}/rest/v1/birthday_wishes`,{
       method:'POST',
@@ -265,13 +344,16 @@ async function addWish(){
       body:JSON.stringify({name,message})
     });
     if(!res.ok)throw new Error();
+    const sentName=name;
     document.getElementById('nameInput').value='';
     document.getElementById('msgInput').value='';
-    fMsg.style.color='#059669';
-    fMsg.textContent=currentLang==='kr'?'초가 켜졌어요!':'Candle lit & wish sent!';
-    setTimeout(()=>fMsg.textContent='',3000);
+    fMsg.textContent='';
     loadWishes();
-  }catch(e){fMsg.style.color='#c9503a';fMsg.textContent='Something went wrong. Try again!';}
+    showPopup(sentName);
+  }catch(e){
+    fMsg.style.color='#c9503a';
+    fMsg.textContent='Something went wrong. Try again!';
+  }
 }
 
 async function loadWishes(){
@@ -296,6 +378,11 @@ async function loadWishes(){
       </div>`).join('');
   }catch(e){}
 }
+
+// close popup when clicking overlay
+document.getElementById('popup').addEventListener('click',function(e){
+  if(e.target===this) closePopup();
+});
 
 function loop(){updateConfetti();drawCake();requestAnimationFrame(loop);}
 loop();
