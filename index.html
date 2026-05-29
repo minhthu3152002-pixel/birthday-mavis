@@ -27,7 +27,7 @@ h1 em{font-style:italic;color:var(--pink)}
 
 /* TRAY */
 .candle-tray{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 4px 4px}
-.candle-pick{width:24px;height:58px;border-radius:5px;cursor:grab;position:relative;transition:transform .15s,box-shadow .15s;box-shadow:0 2px 6px rgba(0,0,0,0.15);flex-shrink:0;touch-action:none}
+.candle-pick{width:18px;height:44px;border-radius:4px;cursor:grab;position:relative;transition:transform .15s,box-shadow .15s;box-shadow:0 2px 6px rgba(0,0,0,0.15);flex-shrink:0;touch-action:none}
 .candle-pick:active{transform:scale(1.18) translateY(-4px)}
 
 .blow-msg{text-align:center;font-size:12px;color:var(--pink);font-weight:500;min-height:16px;margin:0.4rem 0;font-family:'Playfair Display',serif;font-style:italic}
@@ -165,16 +165,14 @@ function switchLang(l,el){
 
 const COLS=['#c9503a','#1a1a1a','#f5c842','#4a9aba','#8b5cf6','#059669','#dc2626','#d97706','#ec4899','#0891b2','#84cc16','#f97316','#6366f1','#14b8a6','#e11d48','#0ea5e9','#a855f7','#22c55e'];
 const CW=480,CH=420;
-const CANDLE_W=16,CANDLE_H=58,CANDLE_R=4;
 
 // Tiers for 480x420 canvas
-// candleY is used only as fallback for old wishes that do not have saved positions yet.
 const TIERS=[
-  {maxC:8, startX:148, endX:332, candleY:44,  topY:98,  botY:168, lx:148, rx:332},
-  {maxC:12,startX:72,  endX:408, candleY:114, topY:168, botY:248, lx:72,  rx:408},
-  {maxC:16,startX:20,  endX:460, candleY:194, topY:248, botY:340, lx:20,  rx:460},
+  {maxC:8, startX:148, endX:332, candleY:62,  topY:98,  botY:168, lx:148, rx:332},
+  {maxC:12,startX:72,  endX:408, candleY:130, topY:168, botY:248, lx:72,  rx:408},
+  {maxC:16,startX:20,  endX:460, candleY:210, topY:248, botY:340, lx:20,  rx:460},
 ];
-const MAX=36; // total candles only; users can place candles freely on any tier
+const MAX=36;
 
 const cc=document.getElementById('cakeCanvas');
 const ctx=cc.getContext('2d');
@@ -206,44 +204,6 @@ function updateDP(cx,cy){
   dragY=(cy-rect.top)*sy;
 }
 
-function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
-function getValidSavedTier(value){
-  const n=Number(value);
-  return Number.isInteger(n)&&n>=0&&n<TIERS.length?n:null;
-}
-function getDropTier(x,y){
-  for(let i=0;i<TIERS.length;i++){
-    const T=TIERS[i];
-    const withinX=x>=T.lx+6&&x<=T.rx-6;
-    const withinY=y>=T.topY&&y<=T.botY;
-    if(withinX&&withinY)return i;
-  }
-  return null;
-}
-function clampCandlePosition(x,y,tier){
-  const safeTier=getValidSavedTier(tier)??0;
-  const T=TIERS[safeTier];
-  return{
-    x:clamp(Number(x),T.lx+CANDLE_W/2+2,T.rx-CANDLE_W/2-2),
-    y:clamp(Number(y),T.topY-CANDLE_H+8,T.botY-CANDLE_H),
-    tier:safeTier
-  };
-}
-function formatVietnamTime(value){
-  return new Intl.DateTimeFormat('vi-VN',{
-    timeZone:'Asia/Ho_Chi_Minh',
-    day:'2-digit',
-    month:'2-digit',
-    year:'numeric',
-    hour:'2-digit',
-    minute:'2-digit',
-    hour12:false
-  }).format(new Date(value));
-}
-function escapeHTML(value=''){
-  return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-}
-
 document.addEventListener('mousemove',e=>{if(drag)updateDP(e.clientX,e.clientY);});
 document.addEventListener('touchmove',e=>{if(drag){e.preventDefault();updateDP(e.touches[0].clientX,e.touches[0].clientY);}},{passive:false});
 document.addEventListener('mouseup',e=>{if(drag)drop(e.clientX,e.clientY);});
@@ -254,13 +214,17 @@ function drop(cx,cy){
   const{sx,sy,rect}=getScale();
   const x=(cx-rect.left)*sx,y=(cy-rect.top)*sy;
   if(candles.length>=MAX){document.getElementById('hintText').textContent=TXT[lang].hint_full;return;}
-
-  const tier=getDropTier(x,y);
-  if(tier===null)return;
-
-  pendingCol=col;
-  pendingPos=clampCandlePosition(x,y-CANDLE_H,tier);
-  openWishPopup();
+  if(y>60&&y<360&&x>10&&x<CW-10){
+    const t0=candles.filter(c=>c.tier===0).length;
+    const t1=candles.filter(c=>c.tier===1).length;
+    let tier=t0<TIERS[0].maxC?0:t1<TIERS[1].maxC?1:2;
+    const T=TIERS[tier];
+    const count=candles.filter(c=>c.tier===tier).length;
+    const spacing=(T.rx-T.lx)/T.maxC;
+    const cx2=T.lx+spacing*count+spacing/2;
+    pendingCol=col;pendingPos={x:cx2,y:T.candleY,tier};
+    openWishPopup();
+  }
 }
 
 // DRAW CAKE
@@ -291,9 +255,13 @@ function drawCake(){
     for(let j=0;j<dc2;j++){ctx.beginPath();ctx.arc(T.lx+35+j*(w/dc2),T.topY+h*0.55,2.8,0,Math.PI*2);ctx.fill();}
     // tier separator
     if(i<2){ctx.beginPath();ctx.moveTo(T.lx,T.botY);ctx.lineTo(T.rx,T.botY);ctx.strokeStyle='rgba(0,0,0,0.05)';ctx.lineWidth=1;ctx.stroke();}
-    // drop zone glow follows the user's actual drag position
-    const active=drag?getDropTier(dragX,dragY):null;
-    if(i===active){ctx.save();ctx.globalAlpha=0.15;ctx.fillStyle='#f5c842';ctx.beginPath();ctx.roundRect(T.lx,T.topY,w,h,r);ctx.fill();ctx.restore();}
+    // drop zone glow when dragging
+    if(drag){
+      const t0=candles.filter(c=>c.tier===0).length;
+      const t1=candles.filter(c=>c.tier===1).length;
+      const active=t0<TIERS[0].maxC?0:t1<TIERS[1].maxC?1:2;
+      if(i===active){ctx.save();ctx.globalAlpha=0.15;ctx.fillStyle='#f5c842';ctx.beginPath();ctx.roundRect(T.lx,T.topY,w,h,r);ctx.fill();ctx.restore();}
+    }
   });
 
   // Mavis text
@@ -302,26 +270,24 @@ function drawCake(){
   // candles
   candles.forEach((c,i)=>{
     const x=c.x,y=c.y;
-    const left=x-CANDLE_W/2;
-    const cg=ctx.createLinearGradient(left,y,left+CANDLE_W,y);
-    cg.addColorStop(0,'rgba(255,255,255,0.20)');cg.addColorStop(1,'rgba(0,0,0,0.10)');
-    ctx.beginPath();ctx.roundRect(left,y,CANDLE_W,CANDLE_H,[CANDLE_R,CANDLE_R,3,3]);ctx.fillStyle=c.col;ctx.fill();
-    ctx.beginPath();ctx.roundRect(left,y,CANDLE_W,CANDLE_H,[CANDLE_R,CANDLE_R,3,3]);ctx.fillStyle=cg;ctx.fill();
+    const cg=ctx.createLinearGradient(x-5,y,x+5,y);
+    cg.addColorStop(0,'rgba(255,255,255,0.18)');cg.addColorStop(1,'rgba(0,0,0,0.08)');
+    ctx.beginPath();ctx.roundRect(x-5,y,10,40,[3,3,2,2]);ctx.fillStyle=c.col;ctx.fill();
+    ctx.beginPath();ctx.roundRect(x-5,y,10,40,[3,3,2,2]);ctx.fillStyle=cg;ctx.fill();
     // wick
-    ctx.beginPath();ctx.moveTo(x,y);ctx.bezierCurveTo(x+2,y-4,x-1,y-8,x+1,y-12);
-    ctx.strokeStyle='#5a4a3a';ctx.lineWidth=1.2;ctx.lineCap='round';ctx.stroke();
-    if(c.lit)drawFlame(x,y-12,Date.now());
+    ctx.beginPath();ctx.moveTo(x,y);ctx.bezierCurveTo(x+2,y-3,x-1,y-7,x+1,y-10);
+    ctx.strokeStyle='#5a4a3a';ctx.lineWidth=1.1;ctx.lineCap='round';ctx.stroke();
+    if(c.lit)drawFlame(x,y-10,Date.now());
     else{
-      ctx.beginPath();ctx.moveTo(x+1,y-12);ctx.bezierCurveTo(x+2,y-17,x-1,y-22,x+1,y-27);
+      ctx.beginPath();ctx.moveTo(x+1,y-10);ctx.bezierCurveTo(x+2,y-15,x-1,y-20,x+1,y-25);
       ctx.strokeStyle='rgba(140,130,120,0.25)';ctx.lineWidth=0.9;ctx.stroke();
     }
     // label
-    const label=String(c.name||'').length>5?String(c.name||'').slice(0,4)+'..':String(c.name||'');
-    const labelY=y+Math.round(CANDLE_H*0.43);
-    ctx.save();ctx.font='bold 8px "DM Sans",sans-serif';
+    const label=c.name.length>5?c.name.slice(0,4)+'..':c.name;
+    ctx.save();ctx.font='bold 7px "DM Sans",sans-serif';
     const tw=ctx.measureText(label).width;
-    ctx.fillStyle='rgba(0,0,0,0.6)';ctx.beginPath();ctx.roundRect(x-tw/2-4,labelY-6,tw+8,13,3);ctx.fill();
-    ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,x,labelY);ctx.restore();
+    ctx.fillStyle='rgba(0,0,0,0.6)';ctx.beginPath();ctx.roundRect(x-tw/2-3,y+11,tw+6,11,3);ctx.fill();
+    ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,x,y+17);ctx.restore();
   });
 
   // confetti
@@ -346,17 +312,14 @@ function drawFlame(x,y,t){
 
 function drawDragCandle(){
   const x=dragX,y=dragY;
-  const bodyY=y-CANDLE_H;
-  const left=x-CANDLE_W/2;
   dctx.clearRect(0,0,CW,CH);
   dctx.save();dctx.globalAlpha=0.88;
-  dctx.beginPath();dctx.roundRect(left,bodyY,CANDLE_W,CANDLE_H,[CANDLE_R,CANDLE_R,3,3]);dctx.fillStyle=drag.col;dctx.fill();
-  dctx.beginPath();dctx.moveTo(x,bodyY);dctx.bezierCurveTo(x+2,bodyY-4,x-1,bodyY-8,x+1,bodyY-12);
-  dctx.strokeStyle='#5a4a3a';dctx.lineWidth=1.2;dctx.lineCap='round';dctx.stroke();
+  dctx.beginPath();dctx.roundRect(x-5,y-38,10,40,3);dctx.fillStyle=drag.col;dctx.fill();
+  dctx.beginPath();dctx.moveTo(x,y-38);dctx.bezierCurveTo(x+2,y-42,x-1,y-46,x+1,y-50);
+  dctx.strokeStyle='#5a4a3a';dctx.lineWidth=1.1;dctx.lineCap='round';dctx.stroke();
   const f=Math.sin(Date.now()/80)*1.2;
-  dctx.translate(x,bodyY-12);
-  dctx.beginPath();dctx.moveTo(0,0);dctx.bezierCurveTo(-5+f,-7,-5+f,-16,0,-20);dctx.bezierCurveTo(5-f,-16,5-f,-7,0,0);dctx.fillStyle='#f59e0b';dctx.fill();
-  dctx.beginPath();dctx.moveTo(0,0);dctx.bezierCurveTo(-3+f,-4,-3,-10,0,-14);dctx.bezierCurveTo(3,-10,3-f,-4,0,0);dctx.fillStyle='#fef3c7';dctx.fill();
+  dctx.translate(x,y-50);
+  dctx.beginPath();dctx.moveTo(0,0);dctx.bezierCurveTo(-4+f,-5,-4+f,-12,0,-15);dctx.bezierCurveTo(4-f,-12,4-f,-5,0,0);dctx.fillStyle='#f59e0b';dctx.fill();
   dctx.restore();
 }
 
@@ -404,27 +367,18 @@ async function submitWish(){
   const message=document.getElementById('msgInput').value.trim();
   const fMsg=document.getElementById('formMsg');
   if(!name||!message){fMsg.textContent=lang==='kr'?'이름과 메시지를 입력해주세요!':'Please enter your name and wish!';return;}
-  if(!pendingPos||!pendingCol){fMsg.textContent='Please place a candle on the cake first.';return;}
   fMsg.style.color='#999';fMsg.textContent=lang==='kr'?'전송 중...':'Sending...';
   try{
-    const payload={
-      name,
-      message,
-      candle_x:pendingPos.x,
-      candle_y:pendingPos.y,
-      candle_tier:pendingPos.tier,
-      candle_color:pendingCol
-    };
-    const res=await fetch(`${SUPA_URL}/rest/v1/birthday_wishes`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=minimal'},body:JSON.stringify(payload)});
-    if(!res.ok){const err=await res.text();throw new Error(err||'Insert failed');}
-    candles.push({...pendingPos,name,col:pendingCol,lit:true});
+    const res=await fetch(`${SUPA_URL}/rest/v1/birthday_wishes`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=minimal'},body:JSON.stringify({name,message})});
+    if(!res.ok)throw new Error();
+    if(pendingPos)candles.push({...pendingPos,name,col:pendingCol,lit:true});
     updateCount();
     const n=name;
     document.getElementById('wishPopup').classList.remove('show');
     pendingCol=null;pendingPos=null;
     loadWishes();
     showTy(n);
-  }catch(e){console.error(e);fMsg.style.color='#c9503a';fMsg.textContent='Something went wrong. Please run the Supabase SQL migration, then try again.';}
+  }catch(e){fMsg.style.color='#c9503a';fMsg.textContent='Something went wrong. Try again!';}
 }
 
 // FIREWORKS
@@ -494,29 +448,13 @@ function closeTy(){document.getElementById('tyPopup').classList.remove('show');i
 function placeCandlesFromDB(wishes){
   candles=[];
   wishes.forEach((w,i)=>{
-    const rawX=Number(w.candle_x),rawY=Number(w.candle_y);
-    const hasSavedPosition=Number.isFinite(rawX)&&Number.isFinite(rawY);
-
-    if(hasSavedPosition){
-      const savedTier=getValidSavedTier(w.candle_tier)??getDropTier(rawX,rawY+CANDLE_H)??0;
-      const pos=clampCandlePosition(rawX,rawY,savedTier);
-      candles.push({
-        ...pos,
-        name:w.name||'Guest',
-        col:w.candle_color||COLS[i%COLS.length],
-        lit:!blown
-      });
-      return;
-    }
-
-    // Fallback for old wishes created before candle position columns existed.
     let tier=0,pos=i;
     if(i>=TIERS[0].maxC){pos=i-TIERS[0].maxC;tier=1;}
     if(i>=TIERS[0].maxC+TIERS[1].maxC){pos=i-TIERS[0].maxC-TIERS[1].maxC;tier=2;}
     if(tier>2)return;
     const T=TIERS[tier];
     const spacing=(T.rx-T.lx)/T.maxC;
-    candles.push({x:T.lx+spacing*pos+spacing/2,y:T.candleY,tier,name:w.name||'Guest',col:COLS[i%COLS.length],lit:!blown});
+    candles.push({x:T.lx+spacing*pos+spacing/2,y:T.candleY,tier,name:w.name,col:COLS[i%COLS.length],lit:!blown});
   });
   updateCount();
 }
@@ -528,13 +466,8 @@ async function loadWishes(){
     placeCandlesFromDB(data);
     const list=document.getElementById('wishesList');
     if(!data.length){list.innerHTML=`<div class="empty">${TXT[lang].empty}</div>`;return;}
-    list.innerHTML=[...data].reverse().map(w=>{
-      const safeName=escapeHTML(w.name||'Guest');
-      const safeMsg=escapeHTML(w.message||'');
-      const avatar=escapeHTML(String(w.name||'?').slice(0,2).toUpperCase());
-      return `<div class="wish-card"><div class="wish-header"><div class="avatar">${avatar}</div><div><div class="wish-name">${safeName}</div><div class="wish-time">${formatVietnamTime(w.created_at)}</div></div></div><div class="wish-msg">${safeMsg}</div></div>`;
-    }).join('');
-  }catch(e){console.error(e);}
+    list.innerHTML=[...data].reverse().map(w=>`<div class="wish-card"><div class="wish-header"><div class="avatar">${w.name.slice(0,2).toUpperCase()}</div><div><div class="wish-name">${w.name}</div><div class="wish-time">${new Date(w.created_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Ho_Chi_Minh'})}</div></div></div><div class="wish-msg">${w.message}</div></div>`).join('');
+  }catch(e){}
 }
 
 function loop(){updateConfetti();drawCake();requestAnimationFrame(loop);}
