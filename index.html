@@ -4,25 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Happy Birthday Mavis!</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:#fdf8f3;min-height:100vh;display:flex;justify-content:center;padding:2rem 1rem}
-.wrap{max-width:560px;width:100%}
+.wrap{max-width:600px;width:100%}
 .hero{text-align:center;margin-bottom:1.2rem}
 .tag{display:inline-block;background:#1a1a1a;color:#f5c842;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:50px;margin-bottom:0.8rem}
 h1{font-family:'Playfair Display',serif;font-size:2.6rem;color:#1a1a1a;line-height:1.1;margin-bottom:0.3rem}
 h1 em{font-style:italic;color:#c9503a}
 .date{font-size:12px;color:#999;letter-spacing:1px;text-transform:uppercase}
-canvas{display:block;margin:0 auto;border-radius:20px;background:#fff9f5}
-.blow-msg{text-align:center;font-size:14px;color:#c9503a;font-weight:500;min-height:22px;margin:0.5rem 0;font-family:'Playfair Display',serif;font-style:italic}
+canvas{display:block;margin:0 auto;border-radius:20px;background:#fff9f5;box-shadow:0 4px 24px rgba(0,0,0,0.06)}
+.blow-msg{text-align:center;font-size:14px;color:#c9503a;font-weight:500;min-height:22px;margin:0.6rem 0;font-family:'Playfair Display',serif;font-style:italic}
 .controls{display:flex;gap:8px;justify-content:center;margin-bottom:1rem}
 .btn-blow{background:#1a1a1a;color:#fff;border:none;border-radius:50px;padding:10px 28px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.5px;transition:all .15s}
 .btn-blow:hover{background:#c9503a}
 .divider{display:flex;align-items:center;gap:12px;margin:1rem 0}
 .divider-line{flex:1;height:1px;background:#e8e0d8}
 .divider-text{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#bbb}
-.form-box{background:#fff;border-radius:20px;padding:1.4rem;border:1px solid #f0e8e0;margin-bottom:1rem}
+.form-box{background:#fff;border-radius:20px;padding:1.4rem;border:1px solid #f0e8e0;margin-bottom:1.2rem}
 .lang-tabs{display:flex;gap:6px;margin-bottom:1rem}
 .lang-tab{padding:5px 16px;border-radius:50px;border:1px solid #e8e0d8;font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;background:#fff;color:#888;transition:all .15s}
 .lang-tab.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
@@ -33,14 +33,18 @@ textarea{resize:none;height:72px}
 .btn-submit{background:#c9503a;color:#fff;border:none;border-radius:50px;padding:11px 24px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;width:100%;letter-spacing:.3px;transition:all .15s}
 .btn-submit:hover{background:#1a1a1a}
 .form-msg{text-align:center;font-size:12px;min-height:18px;margin-top:6px}
+
+/* WISH CARDS - thiệp style */
 .wishes-section{margin-top:0.5rem}
-.wishes-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:#1a1a1a;margin-bottom:0.8rem}
-.wish-card{background:#fff;border:1px solid #f0e8e0;border-radius:16px;padding:12px 16px;margin-bottom:8px;display:flex;gap:12px}
-.wish-card:hover{border-color:#e0d8d0}
-.avatar{width:38px;height:38px;border-radius:50%;background:#1a1a1a;color:#f5c842;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Playfair Display',serif}
+.wishes-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:#1a1a1a;margin-bottom:1rem}
+.wish-card{position:relative;background:linear-gradient(135deg,#fffdf9 0%,#fff8f0 100%);border:1px solid #e8d5c0;border-radius:16px;padding:20px 20px 20px 28px;margin-bottom:12px;overflow:hidden}
+.wish-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(180deg,#c9503a,#f5c842)}
+.wish-card::after{content:'"';position:absolute;right:14px;top:6px;font-family:'Playfair Display',serif;font-size:60px;color:#f5c842;opacity:0.25;line-height:1}
+.wish-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.avatar{width:36px;height:36px;border-radius:50%;background:#1a1a1a;color:#f5c842;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Playfair Display',serif}
 .wish-name{font-size:13px;font-weight:500;color:#1a1a1a}
-.wish-msg{font-size:13px;color:#666;margin-top:3px;line-height:1.5}
-.wish-time{font-size:10px;color:#ccc;margin-top:5px;letter-spacing:.5px}
+.wish-time{font-size:10px;color:#bbb;letter-spacing:.3px}
+.wish-msg{font-family:'Dancing Script',cursive;font-size:16px;color:#5a3a2a;line-height:1.6;padding-left:2px}
 .empty{text-align:center;font-size:13px;color:#ccc;padding:1.5rem;font-style:italic}
 </style>
 </head>
@@ -52,7 +56,7 @@ textarea{resize:none;height:72px}
     <p class="date">생일 축하해요, Mavis!</p>
   </div>
 
-  <canvas id="c" width="340" height="270"></canvas>
+  <canvas id="c" width="560" height="340"></canvas>
   <div class="blow-msg" id="blowMsg"></div>
   <div class="controls">
     <button class="btn-blow" id="blowBtn">Blow the candles!</button>
@@ -111,73 +115,101 @@ let confetti=[];
 function drawCake(){
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#fff9f5';
-  ctx.beginPath();ctx.roundRect(10,10,320,250,20);ctx.fill();
+  ctx.beginPath();ctx.roundRect(0,0,W,H,20);ctx.fill();
 
-  ctx.beginPath();ctx.ellipse(170,248,115,11,0,0,Math.PI*2);ctx.fillStyle='#e8ddd5';ctx.fill();
+  // plate
+  ctx.beginPath();ctx.ellipse(W/2,H-18,200,16,0,0,Math.PI*2);ctx.fillStyle='#e8ddd5';ctx.fill();
 
-  let g=ctx.createLinearGradient(55,185,55,250);g.addColorStop(0,'#e8c9a0');g.addColorStop(1,'#c9a070');
-  ctx.beginPath();ctx.roundRect(55,200,220,52,10);ctx.fillStyle=g;ctx.fill();
+  // bottom layer
+  let g=ctx.createLinearGradient(40,220,40,H-20);
+  g.addColorStop(0,'#e8c9a0');g.addColorStop(1,'#c9a070');
+  ctx.beginPath();ctx.roundRect(40,230,480,80,14);ctx.fillStyle=g;ctx.fill();
+  // frosting blobs
   ctx.fillStyle='#fff8f0';
-  for(let i=0;i<6;i++){ctx.beginPath();ctx.ellipse(80+i*30,202,11,7,0,0,Math.PI*2);ctx.fill();}
+  for(let i=0;i<10;i++){ctx.beginPath();ctx.ellipse(68+i*44,232,16,10,0,0,Math.PI*2);ctx.fill();}
+  // dots
   ctx.fillStyle='#c9503a';
-  for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(95+i*32,222,3,0,Math.PI*2);ctx.fill();}
+  for(let i=0;i<9;i++){ctx.beginPath();ctx.arc(75+i*50,260,4,0,Math.PI*2);ctx.fill();}
 
-  let g2=ctx.createLinearGradient(78,145,78,202);g2.addColorStop(0,'#f0c8a8');g2.addColorStop(1,'#d4a878');
-  ctx.beginPath();ctx.roundRect(78,162,184,42,8);ctx.fillStyle=g2;ctx.fill();
+  // mid layer
+  let g2=ctx.createLinearGradient(70,155,70,232);
+  g2.addColorStop(0,'#f0c8a8');g2.addColorStop(1,'#d4a878');
+  ctx.beginPath();ctx.roundRect(70,170,420,64,12);ctx.fillStyle=g2;ctx.fill();
   ctx.fillStyle='#fff8f0';
-  for(let i=0;i<4;i++){ctx.beginPath();ctx.ellipse(100+i*38,164,9,6,0,0,Math.PI*2);ctx.fill();}
+  for(let i=0;i<7;i++){ctx.beginPath();ctx.ellipse(95+i*56,172,14,9,0,0,Math.PI*2);ctx.fill();}
   ctx.fillStyle='#1a1a1a';
-  for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(115+i*46,182,2.5,0,Math.PI*2);ctx.fill();}
+  for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(110+i*72,200,3.5,0,Math.PI*2);ctx.fill();}
 
-  let g3=ctx.createLinearGradient(100,100,100,164);g3.addColorStop(0,'#f8e8d0');g3.addColorStop(1,'#e8c8a0');
-  ctx.beginPath();ctx.roundRect(100,118,140,46,8);ctx.fillStyle=g3;ctx.fill();
+  // top layer
+  let g3=ctx.createLinearGradient(110,95,110,172);
+  g3.addColorStop(0,'#f8e8d0');g3.addColorStop(1,'#e8c8a0');
+  ctx.beginPath();ctx.roundRect(110,115,340,60,12);ctx.fillStyle=g3;ctx.fill();
   ctx.fillStyle='#fff8f0';
-  for(let i=0;i<3;i++){ctx.beginPath();ctx.ellipse(118+i*44,120,8,5,0,0,Math.PI*2);ctx.fill();}
+  for(let i=0;i<5;i++){ctx.beginPath();ctx.ellipse(130+i*64,117,12,8,0,0,Math.PI*2);ctx.fill();}
 
+  // Mavis text
   ctx.save();
-  ctx.font='italic bold 12px "Playfair Display",serif';
+  ctx.font='italic bold 18px "Playfair Display",serif';
   ctx.fillStyle='#c9503a';ctx.textAlign='center';
-  ctx.fillText('Mavis ♥',170,146);
+  ctx.fillText('Mavis ♥',W/2,152);
   ctx.restore();
 
-  const cols=['#c9503a','#1a1a1a','#f5c842','#4a9aba','#8b5cf6','#059669','#dc2626','#d97706'];
+  // candles
+  const cols=['#c9503a','#1a1a1a','#f5c842','#4a9aba','#8b5cf6','#059669','#dc2626','#d97706','#ec4899','#0891b2'];
   candles.forEach((c,i)=>{
     const x=c.x;
-    ctx.beginPath();ctx.roundRect(x-5,70,10,48,3);ctx.fillStyle=cols[i%cols.length];ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,0.25)';
-    ctx.beginPath();ctx.roundRect(x-1,74,2,40,1);ctx.fill();
-    ctx.beginPath();ctx.moveTo(x,70);ctx.lineTo(x,63);ctx.strokeStyle='#666';ctx.lineWidth=1.2;ctx.stroke();
-    if(c.lit)drawFlame(x,63,Date.now());
+    // candle body
+    ctx.beginPath();ctx.roundRect(x-7,65,14,52,4);ctx.fillStyle=cols[i%cols.length];ctx.fill();
+    // shine
+    ctx.fillStyle='rgba(255,255,255,0.2)';
+    ctx.beginPath();ctx.roundRect(x-2,69,3,44,2);ctx.fill();
+    // wick
+    ctx.beginPath();ctx.moveTo(x,65);ctx.lineTo(x,56);ctx.strokeStyle='#555';ctx.lineWidth=1.5;ctx.stroke();
+    if(c.lit)drawFlame(x,56,Date.now());
+    // name label - white bg for readability
+    const label=c.name.length>7?c.name.slice(0,6)+'..':c.name;
     ctx.save();
-    ctx.font='500 8px "DM Sans",sans-serif';
-    ctx.fillStyle='#fff';ctx.textAlign='center';
-    ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=3;
-    ctx.fillText(c.name.length>6?c.name.slice(0,5)+'..':c.name,x,90);
+    ctx.font='bold 9px "DM Sans",sans-serif';
+    const tw=ctx.measureText(label).width;
+    // bg pill
+    ctx.fillStyle='rgba(0,0,0,0.55)';
+    ctx.beginPath();ctx.roundRect(x-tw/2-4,78,tw+8,13,4);ctx.fill();
+    ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(label,x,85);
     ctx.restore();
   });
 
+  // confetti
   confetti.forEach(p=>{
     ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);
     ctx.fillStyle=p.color;ctx.globalAlpha=p.life;
-    p.circle?ctx.arc(0,0,p.s/2,0,Math.PI*2):ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.4);
-    ctx.fill();ctx.restore();
+    if(p.circle){ctx.beginPath();ctx.arc(0,0,p.s/2,0,Math.PI*2);ctx.fill();}
+    else{ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.4);}
+    ctx.restore();
   });
   ctx.globalAlpha=1;
 }
 
 function drawFlame(x,y,t){
-  const f=Math.sin(t/90+x)*1.5;
+  const f=Math.sin(t/90+x)*2;
   ctx.save();ctx.translate(x,y);
-  ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(-5+f,-6,-6+f,-14,0,-19);ctx.bezierCurveTo(6-f,-14,5-f,-6,0,0);ctx.fillStyle='#f59e0b';ctx.fill();
-  ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(-2+f,-4,-3,-9,0,-13);ctx.bezierCurveTo(3,-9,2-f,-4,0,0);ctx.fillStyle='#fef3c7';ctx.fill();
-  ctx.beginPath();ctx.arc(0,-13,1.8,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+  ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(-6+f,-8,-8+f,-18,0,-24);ctx.bezierCurveTo(8-f,-18,6-f,-8,0,0);ctx.fillStyle='#f59e0b';ctx.fill();
+  ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(-3+f,-5,-4,-12,0,-17);ctx.bezierCurveTo(4,-12,3-f,-5,0,0);ctx.fillStyle='#fef3c7';ctx.fill();
+  ctx.beginPath();ctx.arc(0,-17,2.5,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
   ctx.restore();
 }
 
 function spawnConfetti(){
-  const cols=['#c9503a','#f5c842','#1a1a1a','#4a9aba','#8b5cf6','#059669'];
-  for(let i=0;i<100;i++){
-    confetti.push({x:60+Math.random()*220,y:40+Math.random()*60,vx:(Math.random()-0.5)*5,vy:-Math.random()*6-2,r:Math.random()*Math.PI*2,vr:(Math.random()-0.5)*0.25,s:4+Math.random()*8,color:cols[Math.floor(Math.random()*cols.length)],life:1,circle:Math.random()>.5});
+  const cols=['#c9503a','#f5c842','#1a1a1a','#4a9aba','#8b5cf6','#059669','#ec4899'];
+  for(let i=0;i<120;i++){
+    confetti.push({
+      x:80+Math.random()*400,y:30+Math.random()*80,
+      vx:(Math.random()-0.5)*6,vy:-Math.random()*7-2,
+      r:Math.random()*Math.PI*2,vr:(Math.random()-0.5)*0.25,
+      s:4+Math.random()*9,
+      color:cols[Math.floor(Math.random()*cols.length)],
+      life:1,circle:Math.random()>.5
+    });
   }
 }
 
@@ -188,11 +220,12 @@ function updateConfetti(){
 
 function placeCandlesFromWishes(wishes){
   candles=[];
-  const maxC=Math.min(wishes.length,8);
+  const maxC=Math.min(wishes.length,10);
   if(!maxC)return;
-  const spacing=Math.min(38,200/maxC);
-  const startX=170-(spacing*(maxC-1))/2;
-  for(let i=0;i<maxC;i++) candles.push({x:startX+i*spacing,name:wishes[i].name,lit:true});
+  const totalW=400;
+  const spacing=Math.min(52,totalW/maxC);
+  const startX=W/2-(spacing*(maxC-1))/2;
+  for(let i=0;i<maxC;i++) candles.push({x:startX+i*spacing,name:wishes[i].name,lit:!blown});
 }
 
 document.getElementById('blowBtn').onclick=()=>{
@@ -209,10 +242,10 @@ document.getElementById('blowBtn').onclick=()=>{
     if(i<candles.length){candles[i].lit=false;i++;}
     else{
       clearInterval(iv);blown=true;spawnConfetti();
-      document.getElementById('blowMsg').textContent='Happy Birthday, Mavis! 생일 축하해요!';
+      document.getElementById('blowMsg').textContent='Happy Birthday, Mavis! 생일 축하해요! 🎉';
       document.getElementById('blowBtn').textContent='Relight candles!';
     }
-  },130);
+  },120);
 };
 
 async function addWish(){
@@ -252,12 +285,14 @@ async function loadWishes(){
     if(!data.length){list.innerHTML=`<div class="empty">${LANGS[currentLang].empty}</div>`;return;}
     list.innerHTML=[...data].reverse().map(w=>`
       <div class="wish-card">
-        <div class="avatar">${w.name.slice(0,2).toUpperCase()}</div>
-        <div style="flex:1">
-          <div class="wish-name">${w.name}</div>
-          <div class="wish-msg">${w.message}</div>
-          <div class="wish-time">${new Date(w.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+        <div class="wish-header">
+          <div class="avatar">${w.name.slice(0,2).toUpperCase()}</div>
+          <div>
+            <div class="wish-name">${w.name}</div>
+            <div class="wish-time">${new Date(w.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+          </div>
         </div>
+        <div class="wish-msg">${w.message}</div>
       </div>`).join('');
   }catch(e){}
 }
