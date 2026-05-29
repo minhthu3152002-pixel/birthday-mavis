@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#fff8f9;display:flex;justify-content:center;align-items:center;min-height:100vh}
+    .wrap{text-align:center;padding:2rem 1rem;font-family:'Nunito',sans-serif}
+    h1{font-family:'Pacifico',cursive;font-size:2rem;color:#d4537e;margin-bottom:0.25rem;font-weight:400}
+    .sub{font-size:14px;color:#888780;margin-bottom:2rem}
+    canvas{display:block;margin:0 auto}
+    .btn{margin-top:1.5rem;padding:12px 32px;border-radius:50px;border:none;background:#d4537e;color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:transform .15s,background .15s}
+    .btn:hover{background:#993556;transform:scale(1.04)}
+    .btn:active{transform:scale(0.97)}
+    .msg{margin-top:1.2rem;font-size:1.1rem;color:#3B6D11;font-weight:600;min-height:28px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Happy Birthday!</h1>
+  <p class="sub">Bấm nút hoặc thổi mic để thổi nến nha!</p>
+  <canvas id="c" width="340" height="320"></canvas>
+  <div class="msg" id="msg"></div>
+  <button class="btn" id="blowBtn">Thổi nến!</button>
+</div>
+<script>
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const W=canvas.width,H=canvas.height;
+const CANDLES=5;
+let flames=Array(CANDLES).fill(true);
+let blown=false;
+let confetti=[];
+
+function drawCake(){
+  ctx.clearRect(0,0,W,H);
+  ctx.beginPath();ctx.ellipse(170,290,130,14,0,0,Math.PI*2);ctx.fillStyle='#F4C0D1';ctx.fill();
+  let g=ctx.createLinearGradient(60,200,60,290);g.addColorStop(0,'#ED93B1');g.addColorStop(1,'#D4537E');
+  ctx.beginPath();ctx.roundRect(60,220,220,70,12);ctx.fillStyle=g;ctx.fill();
+  ctx.fillStyle='#fff';for(let i=0;i<7;i++){ctx.beginPath();ctx.arc(85+i*25,255,4,0,Math.PI*2);ctx.fill();}
+  let g2=ctx.createLinearGradient(80,140,80,222);g2.addColorStop(0,'#FAC775');g2.addColorStop(1,'#EF9F27');
+  ctx.beginPath();ctx.roundRect(80,160,180,62,10);ctx.fillStyle=g2;ctx.fill();
+  ctx.fillStyle='#fff';for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(102+i*30,191,4,0,Math.PI*2);ctx.fill();}
+  let g3=ctx.createLinearGradient(100,90,100,162);g3.addColorStop(0,'#9FE1CB');g3.addColorStop(1,'#1D9E75');
+  ctx.beginPath();ctx.roundRect(100,110,140,52,10);ctx.fillStyle=g3;ctx.fill();
+  ctx.fillStyle='#fff';for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(128+i*42,136,4,0,Math.PI*2);ctx.fill();}
+  ctx.fillStyle='#fff';ctx.globalAlpha=0.7;
+  [[110,112],[130,108],[155,106],[175,108],[200,112],[225,110],[235,113]].forEach(d=>{ctx.beginPath();ctx.ellipse(d[0],d[1]+6,7,10,0,0,Math.PI*2);ctx.fill();});
+  ctx.globalAlpha=1;
+  const cx=[120,140,160,180,200];
+  const cols=['#E24B4A','#EF9F27','#5DCAA5','#7F77DD','#D4537E'];
+  for(let i=0;i<CANDLES;i++){
+    let cg=ctx.createLinearGradient(cx[i]-4,50,cx[i]+4,110);
+    cg.addColorStop(0,cols[i]);cg.addColorStop(1,cols[(i+2)%5]);
+    ctx.beginPath();ctx.roundRect(cx[i]-4,72,8,38,3);ctx.fillStyle=cg;ctx.fill();
+    ctx.beginPath();ctx.moveTo(cx[i],72);ctx.lineTo(cx[i],66);ctx.strokeStyle='#444';ctx.lineWidth=1.5;ctx.stroke();
+    if(flames[i])drawFlame(cx[i],66,Date.now());
+  }
+  for(let p of confetti){
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.color;ctx.globalAlpha=p.life;
+    ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.5);ctx.restore();
+  }
+  ctx.globalAlpha=1;
+}
+
+function drawFlame(x,y,t){
+  const f=Math.sin(t/80+x)*2;
+  ctx.save();ctx.translate(x,y);
+  ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(-6+f,-8,-8+f,-16,0,-22);ctx.bezierCurveTo(8-f,-16,6-f,-8,0,0);ctx.fillStyle='#EF9F27';ctx.fill();
+  ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(-3+f,-6,-4,-12,0,-16);ctx.bezierCurveTo(4,-12,3-f,-6,0,0);ctx.fillStyle='#FAC775';ctx.fill();
+  ctx.beginPath();ctx.arc(0,-16,2.5,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+  ctx.restore();
+}
+
+function spawnConfetti(){
+  const cols=['#D4537E','#EF9F27','#1D9E75','#7F77DD','#378ADD','#E24B4A'];
+  for(let i=0;i<80;i++){
+    confetti.push({x:80+Math.random()*180,y:60+Math.random()*60,vx:(Math.random()-0.5)*4,vy:-Math.random()*6-2,r:Math.random()*Math.PI*2,vr:(Math.random()-0.5)*0.2,s:6+Math.random()*8,color:cols[Math.floor(Math.random()*cols.length)],life:1});
+  }
+}
+
+function updateConfetti(){
+  confetti=confetti.filter(p=>p.life>0);
+  for(let p of confetti){p.x+=p.vx;p.y+=p.vy;p.vy+=0.18;p.r+=p.vr;p.life-=0.008;}
+}
+
+function blowAll(){
+  if(blown)return;
+  let remaining=flames.filter(f=>f).length;
+  if(remaining===0)return;
+  let i=0;
+  const iv=setInterval(()=>{
+    let idx=flames.indexOf(true);
+    if(idx===-1){clearInterval(iv);return;}
+    flames[idx]=false;i++;
+    if(i>=remaining){clearInterval(iv);setTimeout(()=>{blown=true;spawnConfetti();document.getElementById('msg').textContent='Happy Birthday! Chuc mung sinh nhat!';document.getElementById('blowBtn').textContent='Thổi lại!';},200);}
+  },120);
+}
+
+function resetCake(){flames=Array(CANDLES).fill(true);blown=false;confetti=[];document.getElementById('msg').textContent='';document.getElementById('blowBtn').textContent='Thổi nến!';}
+
+document.getElementById('blowBtn').onclick=()=>{blown?resetCake():blowAll();};
+
+canvas.onclick=(e)=>{
+  const rect=canvas.getBoundingClientRect();
+  const mx=(e.clientX-rect.left)*(W/rect.width),my=(e.clientY-rect.top)*(H/rect.height);
+  const cx=[120,140,160,180,200];
+  for(let i=0;i<CANDLES;i++){
+    if(Math.abs(mx-cx[i])<12&&my<90&&my>50){
+      flames[i]=false;
+      if(flames.every(f=>!f)&&!blown){blown=true;spawnConfetti();document.getElementById('msg').textContent='Happy Birthday!';document.getElementById('blowBtn').textContent='Thổi lại!';}
+    }
+  }
+};
+
+if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    const ac=new AudioContext(),src=ac.createMediaStreamSource(stream),an=ac.createAnalyser();
+    an.fftSize=256;src.connect(an);
+    const buf=new Uint8Array(an.frequencyBinCount);
+    function check(){an.getByteFrequencyData(buf);if(buf.reduce((a,b)=>a+b,0)/buf.length>18&&!blown)blowAll();requestAnimationFrame(check);}
+    check();
+  }).catch(()=>{});
+}
+
+function loop(){updateConfetti();drawCake();requestAnimationFrame(loop);}
+loop();
+</script>
+</body>
+</html>
