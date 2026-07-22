@@ -165,6 +165,7 @@ function switchLang(l,el){
 
 const COLS=['#c9503a','#1a1a1a','#f5c842','#4a9aba','#8b5cf6','#059669','#dc2626','#d97706','#ec4899','#0891b2','#84cc16','#f97316','#6366f1','#14b8a6','#e11d48','#0ea5e9','#a855f7','#22c55e'];
 const CW=480,CH=420;
+const CANDLE_W=10,CANDLE_H=40;
 
 // Tiers for 480x420 canvas
 const TIERS=[
@@ -173,6 +174,14 @@ const TIERS=[
   {maxC:16,startX:20,  endX:460, candleY:210, topY:248, botY:340, lx:20,  rx:460},
 ];
 const MAX=36;
+
+function getDropTier(x,y){
+  for(let i=0;i<TIERS.length;i++){
+    const T=TIERS[i];
+    if(x>=T.lx+6&&x<=T.rx-6&&y>=T.topY&&y<=T.botY)return i;
+  }
+  return null;
+}
 
 const cc=document.getElementById('cakeCanvas');
 const ctx=cc.getContext('2d');
@@ -214,17 +223,14 @@ function drop(cx,cy){
   const{sx,sy,rect}=getScale();
   const x=(cx-rect.left)*sx,y=(cy-rect.top)*sy;
   if(candles.length>=MAX){document.getElementById('hintText').textContent=TXT[lang].hint_full;return;}
-  if(y>60&&y<360&&x>10&&x<CW-10){
-    const t0=candles.filter(c=>c.tier===0).length;
-    const t1=candles.filter(c=>c.tier===1).length;
-    let tier=t0<TIERS[0].maxC?0:t1<TIERS[1].maxC?1:2;
-    const T=TIERS[tier];
-    const count=candles.filter(c=>c.tier===tier).length;
-    const spacing=(T.rx-T.lx)/T.maxC;
-    const cx2=T.lx+spacing*count+spacing/2;
-    pendingCol=col;pendingPos={x:cx2,y:T.candleY,tier};
-    openWishPopup();
-  }
+  const tier=getDropTier(x,y);
+  if(tier===null)return;
+  const T=TIERS[tier];
+  const candleX=Math.max(T.lx+CANDLE_W/2+2,Math.min(x,T.rx-CANDLE_W/2-2));
+  const candleY=Math.max(T.topY-CANDLE_H+8,Math.min(y-CANDLE_H,T.botY-CANDLE_H));
+  pendingCol=col;
+  pendingPos={x:candleX,y:candleY,tier};
+  openWishPopup();
 }
 
 // DRAW CAKE
@@ -257,9 +263,7 @@ function drawCake(){
     if(i<2){ctx.beginPath();ctx.moveTo(T.lx,T.botY);ctx.lineTo(T.rx,T.botY);ctx.strokeStyle='rgba(0,0,0,0.05)';ctx.lineWidth=1;ctx.stroke();}
     // drop zone glow when dragging
     if(drag){
-      const t0=candles.filter(c=>c.tier===0).length;
-      const t1=candles.filter(c=>c.tier===1).length;
-      const active=t0<TIERS[0].maxC?0:t1<TIERS[1].maxC?1:2;
+      const active=getDropTier(dragX,dragY);
       if(i===active){ctx.save();ctx.globalAlpha=0.15;ctx.fillStyle='#f5c842';ctx.beginPath();ctx.roundRect(T.lx,T.topY,w,h,r);ctx.fill();ctx.restore();}
     }
   });
@@ -369,7 +373,7 @@ async function submitWish(){
   if(!name||!message){fMsg.textContent=lang==='kr'?'이름과 메시지를 입력해주세요!':'Please enter your name and wish!';return;}
   fMsg.style.color='#999';fMsg.textContent=lang==='kr'?'전송 중...':'Sending...';
   try{
-    const res=await fetch(`${SUPA_URL}/rest/v1/birthday_wishes`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=minimal'},body:JSON.stringify({name,message})});
+    const res=await fetch(`${SUPA_URL}/rest/v1/birthday_wishes`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=minimal'},body:JSON.stringify({name,message,candle_x:pendingPos?.x??null,candle_y:pendingPos?.y??null,candle_tier:pendingPos?.tier??null,candle_color:pendingCol??null})});
     if(!res.ok)throw new Error();
     if(pendingPos)candles.push({...pendingPos,name,col:pendingCol,lit:true});
     updateCount();
@@ -448,6 +452,13 @@ function closeTy(){document.getElementById('tyPopup').classList.remove('show');i
 function placeCandlesFromDB(wishes){
   candles=[];
   wishes.forEach((w,i)=>{
+    const hasSavedPosition=w.candle_x!==null&&w.candle_x!==undefined&&w.candle_y!==null&&w.candle_y!==undefined;
+    if(hasSavedPosition){
+      const tier=Number.isInteger(w.candle_tier)?w.candle_tier:(getDropTier(Number(w.candle_x),Number(w.candle_y))??0);
+      candles.push({x:Number(w.candle_x),y:Number(w.candle_y),tier,name:w.name,col:w.candle_color||COLS[i%COLS.length],lit:!blown});
+      return;
+    }
+    // fallback for old wishes without saved position
     let tier=0,pos=i;
     if(i>=TIERS[0].maxC){pos=i-TIERS[0].maxC;tier=1;}
     if(i>=TIERS[0].maxC+TIERS[1].maxC){pos=i-TIERS[0].maxC-TIERS[1].maxC;tier=2;}
